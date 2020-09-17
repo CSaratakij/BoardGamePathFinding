@@ -336,6 +336,7 @@ namespace BoardGame
         Undo.RegisterCompleteObjectUndo(TempInstance.gameObject, "Clear 'Edges'");
 
         EditorUtility.DisplayDialog("Success", "'Edges' has been cleared...", "OK");
+        UpdateGraphMenuItem();
     }
 
     [MenuItem("BoardManager/Reset/Clear all nodes and edges", false, 2)]
