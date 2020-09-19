@@ -410,5 +410,19 @@ namespace BoardGame
                 }
             }
         }
+
+        public GameObject GetNode(int id)
+        {
+            if (id >= nodes.Count)
+                return null;
+
+            return nodes[id];
+        }
+
+        public Dictionary<int, List<List<int>>> GetPath(int startID, int totalMove)
+        {
+            Node root = new Node(startID);
+            return board.GetPossiblePath(root, totalMove);
+        }
     }
 }

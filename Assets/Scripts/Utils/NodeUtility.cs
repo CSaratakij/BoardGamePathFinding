@@ -41,14 +41,17 @@ namespace BoardGame
         public static Dictionary<int, List<int>> ParseEdge(ICollection<string> value)
         {
             var result = new Dictionary<int, List<int>>();
+
             foreach (var data in value)
             {
                 var dict = ParseEdge(data);
+
                 foreach (var key in dict.Keys)
                 {
                     result.Add(key, dict[key]);
                 }
             }
+
             return result;
         }
 
