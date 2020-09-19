@@ -12,11 +12,23 @@ namespace BoardGame
     {
         public static BoardManager Instance = null;
 
+        [Header("Graph Setting")]
         [SerializeField]
         List<GameObject> nodes;
 
         [SerializeField]
         List<string> edgeSetup;
+
+        [Header("Visual Setting")]
+        [Range(0.1f, 1.0f)]
+        [SerializeField]
+        float lineWidth = 0.2f;
+
+        [SerializeField]
+        Color lineColor = Color.red;
+
+        [SerializeField]
+        Material lineMaterial;
 
         public List<GameObject> Nodes => nodes;
         public List<string> EdgeSetup => edgeSetup;
@@ -388,6 +400,8 @@ namespace BoardGame
 
             InitializeGraph(ref graph, edgeSetup);
             board = new Board(graph);
+
+            InitVisualNodeConnection();
         }
 
         void InitializeGraph(ref Graph graph, ICollection<string> edgeSetup)
@@ -407,6 +421,37 @@ namespace BoardGame
                 foreach (var value in edges[key])
                 {
                     graph.AddEdge(key, value);
+                }
+            }
+        }
+
+        void InitVisualNodeConnection()
+        {
+            var edges = NodeUtility.ParseEdge(edgeSetup);
+            var traverseKey = new List<int>();
+
+            foreach (var key in edges.Keys)
+            {
+                var totalNode = edges[key].Count;
+                var lineRenderer = nodes[key].gameObject.AddComponent<LineRenderer>();
+
+                lineRenderer.material = lineMaterial;
+                lineRenderer.widthMultiplier = lineWidth;
+                lineRenderer.positionCount = (totalNode * 2);
+                lineRenderer.SetColors(lineColor, lineColor);
+
+                var originNode = nodes[key];
+                var offset = 0;
+
+                for (int i = 0; i < totalNode; ++i)
+                {
+                    var targetNodeID = edges[key][i];
+                    var targetNode = nodes[targetNodeID];
+
+                    lineRenderer.SetPosition(offset, originNode.transform.position);
+                    lineRenderer.SetPosition(offset + 1, targetNode.transform.position);
+
+                    offset += 2;
                 }
             }
         }
