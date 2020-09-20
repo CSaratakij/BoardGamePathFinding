@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace BoardGame
 {
@@ -46,6 +49,17 @@ namespace BoardGame
         {
             Initialize();
             UpdateUI(gameController.State);
+        }
+
+        void Update()
+        {
+            if (Input.GetKeyUp(KeyCode.Escape)) {
+#if UNITY_EDITOR
+                EditorApplication.isPlaying = false;
+#else
+                Application.Quit();
+#endif
+            }
         }
 
         void Initialize()
