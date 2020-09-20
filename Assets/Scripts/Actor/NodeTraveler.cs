@@ -5,13 +5,19 @@ using UnityEngine;
 
 namespace BoardGame
 {
+    [RequireComponent(typeof(CharacterController))]
     public class NodeTraveler : MonoBehaviour
     {
         public Action OnReachDestination;
 
+        [Header("Character")]
         [SerializeField]
         float moveSpeed = 10.0f;
 
+        [SerializeField]
+        float rotationDamp = 0.02f;
+
+        [Header("Node")]
         [SerializeField]
         int startNodeID = 0;
 
@@ -30,6 +36,7 @@ namespace BoardGame
 
         Vector3 targetPosition;
         Vector3 targetDirection;
+        Vector3 facingDirection;
 
         CharacterController characterController;
         BoardManager boardManager;
@@ -44,6 +51,11 @@ namespace BoardGame
             MoveHandler();
         }
 
+        void LateUpdate()
+        {
+            RotateHandler();
+        }
+
         void Initialize()
         {
             boardManager = BoardManager.Instance;
@@ -56,6 +68,7 @@ namespace BoardGame
             var startNode = boardManager.GetNode(startNodeID);
             transform.position = (startNode) ? (startNode.transform.position) : transform.position;
 
+            facingDirection = transform.forward;
             characterController = GetComponent<CharacterController>();
         }
 
@@ -84,6 +97,9 @@ namespace BoardGame
 
                 targetPosition = node.transform.position;
                 targetDirection = (targetPosition - transform.position);
+
+                facingDirection = targetDirection;
+                facingDirection.y = 0.0f;
 
                 if (targetDirection.magnitude > 1.0f) {
                     targetDirection = targetDirection.normalized;
@@ -118,6 +134,14 @@ namespace BoardGame
                     isBeginMovingTowardNode = false;
                 }
             }
+        }
+
+        void RotateHandler()
+        {
+            var facingRotation = Quaternion.LookRotation(facingDirection);
+            var resultRotation = Quaternion.Slerp(transform.rotation, facingRotation, rotationDamp);
+
+            transform.rotation = resultRotation;
         }
 
         public Dictionary<int, List<List<int>>> FindPossiblePath(int totalMove)
