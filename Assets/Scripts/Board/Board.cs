@@ -26,6 +26,22 @@ namespace BoardGame
             possiblePath = new Dictionary<int, List<int>[]>();
         }
 
+        Dictionary<int, List<List<int>>> RemoveUnavailableDestination(Dictionary<int, List<List<int>>> path)
+        {
+            int[] keys = new int[path.Keys.Count];
+            path.Keys.CopyTo(keys, 0);
+
+            for (int i = 0; i < keys.Length; ++i) {
+                var key = keys[i];
+
+                if (path[key].Count == 0) {
+                    path.Remove(key);
+                }
+            }
+
+            return path;
+        }
+
         public Dictionary<int, List<List<int>>> GetPossiblePath(Node node, int maxDepth)
         {
             var paths = new Dictionary<int, List<List<int>>>();
@@ -62,6 +78,7 @@ namespace BoardGame
                 paths[id].Add(currentPath);
             }
 
+            paths = RemoveUnavailableDestination(paths);
             return paths;
         }
     }
