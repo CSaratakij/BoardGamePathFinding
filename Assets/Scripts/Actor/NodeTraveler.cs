@@ -153,13 +153,6 @@ namespace BoardGame
         public void SetPath(int[] path)
         {
             currentPath = path;
-
-            string result = "";
-
-            foreach (var id in path)
-            {
-                result += id + ", ";
-            }
         }
 
         public void ClearPath()
@@ -175,3 +168,4 @@ namespace BoardGame
         }
     }
 }
+
