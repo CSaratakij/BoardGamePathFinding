@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace BoardGame
 {
@@ -9,7 +10,7 @@ namespace BoardGame
     {
         Roll,
         PickDestination,
-        Move
+        WaitMove
     }
 
     public class GameController : MonoBehaviour
@@ -17,9 +18,14 @@ namespace BoardGame
         public Action<GameState> OnChangeState;
 
         [SerializeField]
-        NodeTraveler[] nodeTravelers;
+        NodeTraveler[] actors;
 
-        GameState State => gameState;
+        public GameState State => gameState;
+        public NodeTraveler CurrentActor => actors[currentActorIndex];
+
+        int currentSeed = 0;
+        int currentActorIndex = 0;
+
         GameState gameState;
 
         void Awake()
@@ -29,21 +35,48 @@ namespace BoardGame
 
         void Initialize()
         {
+            currentSeed = Random.Range(0, 100);
+            Random.InitState(currentSeed);
+
             SubscribeEvent();
         }
 
         void SubscribeEvent()
         {
-            foreach (var traveler in nodeTravelers)
+            foreach (var actor in actors)
             {
-                traveler.OnReachDestination += OnReachDestination;
+                actor.OnReachDestination += OnReachDestination;
             }
         }
 
         void OnReachDestination()
         {
-            Debug.Log("Traveler reach its destination...");
-            //TODO : go back to roll state here...
+            ChangeToNextActorTurn();
+        }
+
+        void ChangeToNextActorTurn()
+        {
+            CurrentActor.StartMove(false);
+            CurrentActor.ClearPath();
+
+            currentActorIndex = (currentActorIndex + 1) >= actors.Length ? 0 : (currentActorIndex + 1);
+            ChangeState(GameState.Roll);
+        }
+
+        public void ChangeState(GameState state)
+        {
+            gameState = state;
+            OnChangeState?.Invoke(gameState);
+        }
+
+        public int RollDice()
+        {
+            int result = Random.Range(1, 7);
+
+            currentSeed = Random.Range(0, 100);
+            Random.InitState(currentSeed);
+
+            return result;
         }
     }
 }
