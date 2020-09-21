@@ -1,0 +1,17 @@
+{
+    "name": "BoardGame.Editor",
+    "references": [
+        "GUID:bbe8bda876260274bb716cfa9ec395f6"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
